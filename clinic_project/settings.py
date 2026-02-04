@@ -1,17 +1,16 @@
 import os
 from pathlib import Path
+import dj_database_url  # New import for database handling
 
 # --- DIRECTORY SETTINGS ---
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # --- SECURITY ---
-# In production, use an environment variable for the Secret Key
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-your-key-here')
 
-# Set DEBUG to False in production
+# Debug should be False in production
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-# Allow Vercel domain and localhost
 ALLOWED_HOSTS = ['.vercel.app', 'now.sh', '127.0.0.1', 'localhost']
 
 # --- APPS ---
@@ -22,13 +21,23 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    # Third party apps
+    'crispy_forms',
+    'crispy_bootstrap5',  # Assuming you are using Bootstrap 5
+    'widget_tweaks',
+    
+    # Internal apps
     'appointments',
 ]
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 # --- MIDDLEWARE ---
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Crucial for serving static files on Vercel
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Static file handling
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -39,7 +48,6 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'clinic_project.urls'
 
-# --- TEMPLATES ---
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -57,36 +65,26 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'clinic_project.wsgi.application'
 
-# --- DATABASE ---
-# Note: SQLite will reset on Vercel every time the app redeploys. 
+# --- DATABASE CONFIGURATION ---
+# This logic checks if DATABASE_URL exists (Production). 
+# If not, it falls back to local SQLite (Development).
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600,
+        ssl_require=not DEBUG # Require SSL in production
+    )
 }
-
-# --- AUTHENTICATION ---
-AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
-]
 
 # --- STATIC FILES ---
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# WhiteNoise optimization for static files
+# WhiteNoise storage optimization
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Create the static folder if it doesn't exist
-if not os.path.exists(os.path.join(BASE_DIR, 'static')):
-    os.makedirs(os.path.join(BASE_DIR, 'static'))
-
-# --- REDIRECTS ---
+# --- AUTH & REDIRECTS ---
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'appointment_main'
 LOGOUT_REDIRECT_URL = 'login'
