@@ -1,0 +1,21 @@
+{% extends 'appointments/base.html' %} {% block content %}
+<div style="max-width: 1000px; margin: 0 auto; padding: 20px;">
+    
+    {% include 'appointments/components/organisms/navbar.html' %}
+
+    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 30px; margin-top: 40px;">
+        <aside>
+            {% include 'appointments/components/organisms/appointment_form.html' %}
+        </aside>
+
+        <section>
+            <h2 style="color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 10px;">Current Appointments</h2>
+            {% for appt in appointments %}
+                {% include 'appointments/components/organisms/appointment_card.html' with data=appt %}
+            {% empty %}
+                <p style="color: #666; font-style: italic;">No appointments scheduled for today.</p>
+            {% endfor %}
+        </section>
+    </div>
+</div>
+{% endblock %}

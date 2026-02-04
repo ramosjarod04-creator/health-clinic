@@ -1,0 +1,15 @@
+<section style="background: white; padding: 25px; border: 2px solid #e6f0ff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+    <h3 style="color: #004a99; margin-top: 0;">Schedule New Visit</h3>
+    <form method="POST">
+        {% csrf_token %}
+        
+        {% include 'appointments/components/molecules/form_field.html' with label="Patient Name" name="patient_name" placeholder="Enter patient name" %}
+        {% include 'appointments/components/molecules/form_field.html' with label="Doctor Name" name="doctor_name" placeholder="Enter doctor name" %}
+        {% include 'appointments/components/molecules/form_field.html' with label="Preferred Date" name="date" type="date" %}
+        {% include 'appointments/components/molecules/form_field.html' with label="Time" name="time" type="time" %}
+        
+        <div style="margin-top: 20px;">
+            {% include 'appointments/components/atoms/button.html' with text="Confirm Appointment" type="submit" %}
+        </div>
+    </form>
+</section>

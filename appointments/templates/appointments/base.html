@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Clinic System</title>
+    <style>
+        :root { --primary-blue: #0052cc; --bg-light: #f4f7fe; }
+        body { margin: 0; font-family: 'Inter', 'Segoe UI', sans-serif; background-color: var(--bg-light); color: #1e293b; }
+        * { box-sizing: border-box; }
+        /* Scrollbar styling */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #999; }
+    </style>
+</head>
+<body>
+
+    {% if user.is_authenticated %}
+        {% include 'appointments/components/organisms/navigation.html' %}
+        
+        <div style="margin-left: 260px; min-height: 100vh; display: flex; flex-direction: column;">
+            {% include 'appointments/components/organisms/header.html' %}
+            
+            <main style="padding: 30px; flex: 1;">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    {% else %}
+        <main>
+            {% block auth_content %}{% endblock %}
+        </main>
+    {% endif %}
+
+</body>
+</html>

@@ -1,0 +1,14 @@
+<nav class="nav-shell">
+    <div style="font-size: 1.5rem; font-weight: bold; letter-spacing: 1px;">
+        HEALTH<span style="font-weight: 300;">CLINIC</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 20px;">
+        <span style="font-size: 0.9rem;">Welcome, <strong>{{ user.username }}</strong></span>
+        <form action="{% url 'logout' %}" method="post" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" style="background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 5px 15px; border-radius: 15px; cursor: pointer; font-size: 0.8rem;">
+                LOGOUT
+            </button>
+        </form>
+    </div>
+</nav>

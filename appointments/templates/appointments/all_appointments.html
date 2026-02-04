@@ -1,0 +1,33 @@
+{% extends 'appointments/base.html' %}
+
+{% block content %}
+<div style="padding: 30px;">
+    <div style="background: white; border-radius: 20px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);">
+        <h3 style="margin: 0 0 25px 0; color: #1e293b;">Appointment Management</h3>
+        
+        {% for appt in appointments %}
+        <div style="background: #f8fafc; border-radius: 15px; padding: 20px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #e2e8f0;">
+            <div>
+                <span style="font-size: 0.7rem; font-weight: 800; color: #0052cc; text-transform: uppercase;">{{ appt.get_service_type_display }}</span>
+                <h4 style="margin: 5px 0;">Patient: {{ appt.patient_name }}</h4>
+                <p style="margin: 0; font-size: 0.85rem; color: #64748b;">Dr. {{ appt.doctor_name }} | Fee: ₱{{ appt.fee|floatformat:2 }}</p>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                {% if appt.status == 'pending' %}
+                    <a href="{% url 'update_status' appt.pk 'accepted' %}" style="background: #2ecc71; color: white; padding: 8px 15px; border-radius: 8px; text-decoration: none; font-size: 0.8rem; font-weight: 600;">ACCEPT</a>
+                    <a href="{% url 'update_status' appt.pk 'denied' %}" style="background: #e11d48; color: white; padding: 8px 15px; border-radius: 8px; text-decoration: none; font-size: 0.8rem; font-weight: 600;">DENY</a>
+                {% else %}
+                    <span style="color: #64748b; font-size: 0.8rem; font-weight: 700;">{{ appt.status|upper }}</span>
+                {% endif %}
+                
+                <form action="{% url 'delete_appointment' appt.pk %}" method="POST" style="margin:0;">
+                    {% csrf_token %}
+                    <button type="submit" style="background: none; border: none; cursor: pointer;">🗑️</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

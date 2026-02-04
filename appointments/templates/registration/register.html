@@ -1,0 +1,25 @@
+{% extends 'appointments/base.html' %}
+
+{% block auth_content %}
+<div style="display: flex; min-height: 100vh; align-items: center; justify-content: center; background: #f6f5f7;">
+    <div style="background: white; border-radius: 10px; box-shadow: 0 14px 28px rgba(0,0,0,0.2); display: flex; width: 768px; max-width: 100%; min-height: 480px; overflow: hidden; flex-direction: row-reverse;">
+        
+        <div style="flex: 1; padding: 50px; text-align: center;">
+            <h1 style="color: #333; margin-bottom: 20px;">Create Account</h1>
+            <form method="POST">
+                {% csrf_token %}
+                <div style="text-align: left; margin-bottom: 20px;">
+                    {{ form.as_p }}
+                </div>
+                {% include 'appointments/components/atoms/button.html' with text="SIGN UP" type="submit" %}
+            </form>
+        </div>
+
+        <div style="flex: 1; background: linear-gradient(to right, #2b82ff, #0052cc); color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; text-align: center;">
+            <h1>Welcome Back!</h1>
+            <p>To keep connected with us please login with your personal info.</p>
+            <a href="{% url 'login' %}" style="border: 1px solid white; color: white; border-radius: 20px; padding: 10px 30px; text-decoration: none; font-weight: bold; margin-top: 20px;">SIGN IN</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

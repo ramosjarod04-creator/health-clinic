@@ -1,0 +1,105 @@
+{% extends 'appointments/base.html' %}
+
+{% block content %}
+<style>
+    /* Scrollbar Styling */
+    .scroll-container::-webkit-scrollbar { width: 6px; }
+    .scroll-container::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
+    .scroll-container::-webkit-scrollbar-thumb { background: #0052cc; border-radius: 10px; }
+
+    /* Appointment Card Status Borders */
+    .card-base { 
+        background: white; padding: 20px; border-radius: 15px; 
+        margin-bottom: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); 
+        border-left: 5px solid #cbd5e1; /* Default grey */
+    }
+    .status-pending { border-left-color: #f1c40f !important; }
+    .status-accepted, .status-completed { border-left-color: #2ecc71 !important; }
+    .status-admitted { border-left-color: #3498db !important; }
+    .status-cancelled, .status-discharged { border-left-color: #e11d48 !important; }
+
+    .btn-cancel:hover { background: #fff1f2 !important; }
+</style>
+
+<div style="max-width: 1000px; margin: 0 auto; padding: 20px;">
+    <div style="background: linear-gradient(135deg, #0052cc 0%, #2b82ff 100%); border-radius: 20px; padding: 35px; color: white; margin-bottom: 30px; box-shadow: 0 10px 20px rgba(0, 50, 150, 0.1);">
+        <h1 style="margin: 0; font-size: 1.8rem;">Book Your Appointment</h1>
+        <p style="opacity: 0.9; margin-top: 5px;">Welcome back, {{ user.username }}. Schedule your next visit below.</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 30px;">
+        <div style="background: white; padding: 30px; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); height: fit-content;">
+            <h3 style="margin-top: 0; color: #1e293b; margin-bottom: 20px;">New Schedule</h3>
+            <form method="POST">
+                {% csrf_token %}
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #64748b; margin-bottom: 5px;">Patient Name</label>
+                    <input type="text" name="patient_name" value="{{ user.get_full_name|default:user.username }}" readonly style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; background: #f8fafc;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #64748b; margin-bottom: 5px;">Preferred Doctor</label>
+                    <select name="doctor_name" required style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; background: white;">
+                        {% for doctor in available_doctors %}
+                            <option value="Dr. {{ doctor.get_full_name|default:doctor.username }}">Dr. {{ doctor.get_full_name|default:doctor.username }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #64748b; margin-bottom: 5px;">Service Type</label>
+                    <select name="service_type" required style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; background: white;">
+                        {% for code, label in service_choices %}
+                            <option value="{{ code }}">{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #64748b; margin-bottom: 5px;">Date</label>
+                    <input type="date" name="date" required style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px;">
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #64748b; margin-bottom: 5px;">Time</label>
+                    <input type="time" name="time" required style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px;">
+                </div>
+                <button type="submit" style="width: 100%; background: #0052cc; color: white; border: none; padding: 14px; border-radius: 12px; font-weight: 600; cursor: pointer;">Confirm Appointment</button>
+            </form>
+        </div>
+
+        <div>
+            <h3 style="margin-top: 0; color: #1e293b; margin-bottom: 20px;">My Upcoming Visits</h3>
+            
+            <div class="scroll-container" style="max-height: 550px; overflow-y: auto; padding-right: 10px;">
+                {% for appt in appointments %}
+                    <div class="card-base status-{{ appt.status }}">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h4 style="margin: 0; color: #1e293b;">{{ appt.get_service_type_display }}</h4>
+                                <p style="margin: 5px 0 0; color: #64748b; font-size: 0.85rem;">Dr. {{ appt.doctor_name }} • {{ appt.date }}</p>
+                                <p style="margin: 5px 0 0; color: #0052cc; font-weight: 700; font-size: 0.9rem;">₱{{ appt.fee|floatformat:2 }}</p>
+                            </div>
+                            
+                            <div style="text-align: right; display: flex; flex-direction: column; gap: 8px; align-items: flex-end;">
+                                <span style="padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; background: #f1f5f9; color: #475569;">
+                                    {{ appt.status|upper }}
+                                </span>
+                                
+                                {% if appt.status == 'pending' %}
+                                <a href="{% url 'cancel_appointment' appt.pk %}" 
+                                   class="btn-cancel"
+                                   onclick="return confirm('Are you sure you want to cancel this appointment?')"
+                                   style="color: #e11d48; font-size: 0.75rem; font-weight: 600; text-decoration: none; border: 1px solid #fecaca; padding: 4px 8px; border-radius: 6px; transition: 0.2s;">
+                                    Cancel
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div style="text-align: center; padding: 40px; color: #64748b; background: white; border-radius: 15px;">
+                        <p>No appointments found.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

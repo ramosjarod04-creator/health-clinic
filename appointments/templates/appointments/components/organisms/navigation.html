@@ -1,0 +1,67 @@
+<style>
+    .nav-container {
+        width: 260px; background: white; height: 100vh; border-right: 1px solid #eef2f6; 
+        padding: 30px 20px; position: fixed; left: 0; top: 0; z-index: 1001;
+    }
+    .nav-logo-container { margin-bottom: 40px; padding-left: 10px; }
+    .nav-logo { 
+        margin: 0; font-size: 1.4rem; color: #0052cc; letter-spacing: -0.5px; 
+        display: flex; align-items: center; gap: 8px; 
+    }
+    .nav-logo-icon { background: #0052cc; color: white; padding: 2px 8px; border-radius: 6px; font-weight: 800; }
+    
+    .nav-list { list-style: none; padding: 0; margin: 0; }
+    .nav-item { margin-bottom: 8px; }
+    .nav-link { 
+        display: block; padding: 12px 15px; border-radius: 12px; 
+        text-decoration: none; transition: all 0.2s; 
+    }
+    
+    /* Dynamic Classes */
+    .link-active { color: #0052cc !important; background-color: #f0f7ff !important; font-weight: 600 !important; }
+    .link-inactive { color: #64748b; font-weight: 500; }
+    .link-inactive:hover { background-color: #f8fafc; }
+    
+    .nav-divider { margin-top: 20px; border-top: 1px solid #f1f5f9; padding-top: 20px; }
+</style>
+
+<nav class="nav-container">
+    <div class="nav-logo-container">
+        <h2 class="nav-logo">
+            <span class="nav-logo-icon">H</span>
+            HEALTH CLINIC
+        </h2>
+    </div>
+
+    <ul class="nav-list">
+        <li class="nav-item">
+            <a href="{% url 'appointment_main' %}" 
+               class="nav-link {% if request.resolver_match.url_name == 'appointment_main' %}link-active{% else %}link-inactive{% endif %}">
+                Dashboard
+            </a>
+        </li>
+
+        {% if user.is_staff %}
+            <li class="nav-item">
+                <a href="{% url 'patients_list' %}" 
+                   class="nav-link {% if request.resolver_match.url_name == 'patients_list' %}link-active{% else %}link-inactive{% endif %}">
+                    Patients
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{% url 'all_appointments' %}" 
+                   class="nav-link {% if request.resolver_match.url_name == 'all_appointments' %}link-active{% else %}link-inactive{% endif %}">
+                    All Appointments
+                </a>
+            </li>
+        {% endif %}
+
+        <li class="nav-divider">
+            <a href="{% url 'profile_settings' %}" 
+               class="nav-link {% if request.resolver_match.url_name == 'profile_settings' %}link-active{% else %}link-inactive{% endif %}">
+                Account Settings
+            </a>
+        </li>
+    </ul>
+</nav>

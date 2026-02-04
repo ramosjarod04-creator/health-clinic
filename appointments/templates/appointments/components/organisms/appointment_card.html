@@ -1,0 +1,30 @@
+<div style="background: white; border-radius: 15px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center;">
+    <div>
+        <h4 style="margin: 0; color: #333;">{{ data.patient_name }}</h4>
+        <p style="margin: 5px 0 0; font-size: 0.85rem; color: #64748b;">
+            Dr. {{ data.doctor_name }} | {{ data.date }} at {{ data.time }}
+        </p>
+    </div>
+
+    <div style="display: flex; gap: 10px;">
+        {% if data.status == 'pending' %}
+            <a href="{% url 'update_status' data.pk 'accepted' %}" 
+               style="text-decoration: none; background: #dcfce7; color: #166534; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 0.8rem;">
+                APPROVE
+            </a>
+            <a href="{% url 'update_status' data.pk 'denied' %}" 
+               style="text-decoration: none; background: #fee2e2; color: #991b1b; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 0.8rem;">
+                DENY
+            </a>
+        {% else %}
+            {% if data.status == 'accepted' %}
+                <a href="{% url 'update_status' data.pk 'completed' %}" style="text-decoration: none; color: #2ecc71; font-weight: bold; font-size: 0.8rem;">MARK DONE</a>
+            {% endif %}
+            
+            <form action="{% url 'delete_appointment' data.pk %}" method="POST" style="margin: 0;">
+                {% csrf_token %}
+                <button type="submit" style="background: none; border: none; color: #ff4444; cursor: pointer; font-size: 0.8rem;">REMOVE</button>
+            </form>
+        {% endif %}
+    </div>
+</div>

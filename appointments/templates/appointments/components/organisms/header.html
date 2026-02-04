@@ -1,0 +1,12 @@
+<header style="background: white; padding: 15px 30px; border-bottom: 1px solid #eef2f6; display: flex; justify-content: flex-end; align-items: center; position: sticky; top: 0; z-index: 1000;">
+    <div style="display: flex; align-items: center; gap: 20px;">
+        <span style="font-size: 0.9rem; color: #64748b;">Logged in as: <strong>{{ user.username }}</strong></span>
+        
+        <form action="{% url 'logout' %}" method="post" style="margin: 0;">
+            {% csrf_token %}
+            <button type="submit" style="background: none; border: none; color: #e11d48; font-weight: 600; cursor: pointer; font-size: 0.9rem; padding: 5px 10px; border-radius: 8px;">
+                Logout
+            </button>
+        </form>
+    </div>
+</header>
