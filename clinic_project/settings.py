@@ -1,11 +1,20 @@
 import os
 from pathlib import Path
 
+# --- DIRECTORY SETTINGS ---
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = 'django-insecure-your-key-here'
-DEBUG = True
-ALLOWED_HOSTS = []
 
+# --- SECURITY ---
+# In production, use an environment variable for the Secret Key
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-your-key-here')
+
+# Set DEBUG to False in production
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+
+# Allow Vercel domain and localhost
+ALLOWED_HOSTS = ['.vercel.app', 'now.sh', '127.0.0.1', 'localhost']
+
+# --- APPS ---
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -16,8 +25,10 @@ INSTALLED_APPS = [
     'appointments',
 ]
 
+# --- MIDDLEWARE ---
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Crucial for serving static files on Vercel
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -28,6 +39,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'clinic_project.urls'
 
+# --- TEMPLATES ---
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -43,6 +55,10 @@ TEMPLATES = [
     },
 ]
 
+WSGI_APPLICATION = 'clinic_project.wsgi.application'
+
+# --- DATABASE ---
+# Note: SQLite will reset on Vercel every time the app redeploys. 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -50,13 +66,27 @@ DATABASES = {
     }
 }
 
-# --- STATIC & AUTH SETTINGS ---
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR / "static"]
-# Create the static folder if it doesn't exist to stop the warning
-if not os.path.exists(STATICFILES_DIRS[0]):
-    os.makedirs(STATICFILES_DIRS[0])
+# --- AUTHENTICATION ---
+AUTH_PASSWORD_VALIDATORS = [
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
+]
 
+# --- STATIC FILES ---
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# WhiteNoise optimization for static files
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Create the static folder if it doesn't exist
+if not os.path.exists(os.path.join(BASE_DIR, 'static')):
+    os.makedirs(os.path.join(BASE_DIR, 'static'))
+
+# --- REDIRECTS ---
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'appointment_main'
 LOGOUT_REDIRECT_URL = 'login'
