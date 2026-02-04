@@ -58,7 +58,7 @@
                 </thead>
                 <tbody>
                     {% for appt in appointments %}
-                        {% if appt.status == 'completed' %}
+                        {% if appt.status == 'completed' or appt.status == 'discharged' %}
                         <tr style="border-bottom: 1px solid #f1f5f9;">
                             <td style="padding: 15px; font-weight: 600; color: #1e293b;">{{ appt.patient_name }}</td>
                             <td style="padding: 15px; color: #64748b; font-size: 0.9rem;">{{ appt.get_service_type_display }}</td>
