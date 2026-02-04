@@ -1,31 +1,8 @@
-<style>
-    .nav-container {
-        width: 260px; background: white; height: 100vh; border-right: 1px solid #eef2f6; 
-        padding: 30px 20px; position: fixed; left: 0; top: 0; z-index: 1001;
-    }
-    .nav-logo-container { margin-bottom: 40px; padding-left: 10px; }
-    .nav-logo { 
-        margin: 0; font-size: 1.4rem; color: #0052cc; letter-spacing: -0.5px; 
-        display: flex; align-items: center; gap: 8px; 
-    }
-    .nav-logo-icon { background: #0052cc; color: white; padding: 2px 8px; border-radius: 6px; font-weight: 800; }
-    
-    .nav-list { list-style: none; padding: 0; margin: 0; }
-    .nav-item { margin-bottom: 8px; }
-    .nav-link { 
-        display: block; padding: 12px 15px; border-radius: 12px; 
-        text-decoration: none; transition: all 0.2s; 
-    }
-    
-    /* Dynamic Classes */
-    .link-active { color: #0052cc !important; background-color: #f0f7ff !important; font-weight: 600 !important; }
-    .link-inactive { color: #64748b; font-weight: 500; }
-    .link-inactive:hover { background-color: #f8fafc; }
-    
-    .nav-divider { margin-top: 20px; border-top: 1px solid #f1f5f9; padding-top: 20px; }
-</style>
+<button id="drawer-toggle" class="drawer-button">
+    <span class="hamburger"></span>
+</button>
 
-<nav class="nav-container">
+<nav class="nav-container" id="side-nav">
     <div class="nav-logo-container">
         <h2 class="nav-logo">
             <span class="nav-logo-icon">H</span>
@@ -57,7 +34,7 @@
             </li>
         {% endif %}
 
-        <li class="nav-divider">
+        <li class="nav-item nav-divider">
             <a href="{% url 'profile_settings' %}" 
                class="nav-link {% if request.resolver_match.url_name == 'profile_settings' %}link-active{% else %}link-inactive{% endif %}">
                 Account Settings
@@ -65,3 +42,98 @@
         </li>
     </ul>
 </nav>
+
+<div id="nav-overlay" class="overlay"></div>
+
+<style>
+    /* DESKTOP STYLES (Unchanged) */
+    .nav-container {
+        width: 260px; background: white; height: 100vh; border-right: 1px solid #eef2f6; 
+        padding: 30px 20px; position: fixed; left: 0; top: 0; z-index: 1001;
+        transition: transform 0.3s ease-in-out;
+    }
+    .drawer-button { display: none; }
+    .nav-logo-container { margin-bottom: 40px; padding-left: 10px; }
+    .nav-logo { margin: 0; font-size: 1.4rem; color: #0052cc; display: flex; align-items: center; gap: 8px; }
+    .nav-logo-icon { background: #0052cc; color: white; padding: 2px 8px; border-radius: 6px; font-weight: 800; }
+    .nav-list { list-style: none; padding: 0; margin: 0; }
+    .nav-item { margin-bottom: 8px; }
+    .nav-link { display: block; padding: 12px 15px; border-radius: 12px; text-decoration: none; transition: 0.2s; }
+    .link-active { color: #0052cc !important; background-color: #f0f7ff !important; font-weight: 600 !important; }
+    .link-inactive { color: #64748b; font-weight: 500; }
+    .link-inactive:hover { background-color: #f8fafc; }
+    .nav-divider { margin-top: 20px; border-top: 1px solid #f1f5f9; padding-top: 20px; }
+
+    /* MOBILE DRAWER STYLES */
+    @media (max-width: 768px) {
+        /* Sidebar Hidden by Default on Mobile */
+        .nav-container {
+            transform: translateX(-100%);
+            box-shadow: 10px 0 30px rgba(0,0,0,0.1);
+        }
+
+        /* Visible Sidebar Class */
+        .nav-container.active {
+            transform: translateX(0);
+        }
+
+        /* Drawer Button styling */
+        .drawer-button {
+            display: flex;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1002;
+            background: #0052cc;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,82,204,0.3);
+        }
+
+        /* Hamburger Icon Line */
+        .hamburger, .hamburger::before, .hamburger::after {
+            content: '';
+            display: block;
+            background: white;
+            height: 2px;
+            width: 20px;
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+        .hamburger::before { transform: translateY(-7px); }
+        .hamburger::after { transform: translateY(5px); }
+
+        /* Overlay Styling */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(2px);
+            z-index: 1000;
+        }
+        .overlay.active { display: block; }
+    }
+</style>
+
+<script>
+    const drawerToggle = document.getElementById('drawer-toggle');
+    const sideNav = document.getElementById('side-nav');
+    const navOverlay = document.getElementById('nav-overlay');
+
+    function toggleMenu() {
+        sideNav.classList.toggle('active');
+        navOverlay.classList.toggle('active');
+    }
+
+    drawerToggle.addEventListener('click', toggleMenu);
+    navOverlay.addEventListener('click', toggleMenu);
+</script>

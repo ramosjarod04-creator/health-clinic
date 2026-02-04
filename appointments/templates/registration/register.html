@@ -1,25 +1,131 @@
 {% extends 'appointments/base.html' %}
 
 {% block auth_content %}
-<div style="display: flex; min-height: 100vh; align-items: center; justify-content: center; background: #f6f5f7;">
-    <div style="background: white; border-radius: 10px; box-shadow: 0 14px 28px rgba(0,0,0,0.2); display: flex; width: 768px; max-width: 100%; min-height: 480px; overflow: hidden; flex-direction: row-reverse;">
+<div class="auth-wrapper">
+    <div class="auth-container">
         
-        <div style="flex: 1; padding: 50px; text-align: center;">
+        <div class="overlay-section">
+            <h1>Welcome Back!</h1>
+            <p>To keep connected with us please login with your personal info.</p>
+            <a href="{% url 'login' %}" class="ghost-button">SIGN IN</a>
+        </div>
+
+        <div class="form-section">
             <h1 style="color: #333; margin-bottom: 20px;">Create Account</h1>
             <form method="POST">
                 {% csrf_token %}
-                <div style="text-align: left; margin-bottom: 20px;">
+                <div class="django-form-wrapper">
                     {{ form.as_p }}
                 </div>
                 {% include 'appointments/components/atoms/button.html' with text="SIGN UP" type="submit" %}
             </form>
+            
+            <div class="mobile-only-footer">
+                <p style="margin-top: 20px; font-size: 0.9rem;">
+                    Already have an account? <a href="{% url 'login' %}" style="color: #0052cc; font-weight: bold;">Sign In</a>
+                </p>
+            </div>
         </div>
 
-        <div style="flex: 1; background: linear-gradient(to right, #2b82ff, #0052cc); color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; text-align: center;">
-            <h1>Welcome Back!</h1>
-            <p>To keep connected with us please login with your personal info.</p>
-            <a href="{% url 'login' %}" style="border: 1px solid white; color: white; border-radius: 20px; padding: 10px 30px; text-decoration: none; font-weight: bold; margin-top: 20px;">SIGN IN</a>
-        </div>
     </div>
 </div>
+
+<style>
+    /* Desktop Base Styles */
+    .auth-wrapper {
+        display: flex; 
+        min-height: 100vh; 
+        align-items: center; 
+        justify-content: center; 
+        background: #f6f5f7;
+        padding: 20px;
+    }
+
+    .auth-container {
+        background: white; 
+        border-radius: 10px; 
+        box-shadow: 0 14px 28px rgba(0,0,0,0.2); 
+        display: flex; 
+        width: 850px; /* Slightly wider for registration forms */
+        max-width: 100%; 
+        min-height: 550px; 
+        overflow: hidden;
+        /* Matches your row-reverse logic for desktop */
+        flex-direction: row-reverse; 
+    }
+
+    .form-section {
+        flex: 1.2; /* Gives more room to the form */
+        padding: 40px 50px; 
+        text-align: center;
+        background: white;
+    }
+
+    .django-form-wrapper {
+        text-align: left; 
+        margin-bottom: 20px;
+    }
+
+    /* Style the default Django form paragraphs */
+    .django-form-wrapper p {
+        margin-bottom: 15px;
+    }
+
+    .django-form-wrapper input {
+        width: 100%;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        margin-top: 5px;
+    }
+
+    .overlay-section {
+        flex: 0.8; 
+        background: linear-gradient(to right, #2b82ff, #0052cc); 
+        color: white; 
+        display: flex; 
+        flex-direction: column; 
+        align-items: center; 
+        justify-content: center; 
+        padding: 40px; 
+        text-align: center;
+    }
+
+    .ghost-button {
+        border: 1px solid white; 
+        color: white; 
+        border-radius: 20px; 
+        padding: 10px 30px; 
+        text-decoration: none; 
+        font-weight: bold; 
+        margin-top: 20px;
+        transition: 0.2s;
+    }
+
+    .mobile-only-footer {
+        display: none;
+    }
+
+    /* --- MOBILE RESPONSIVE --- */
+    @media (max-width: 768px) {
+        .auth-container {
+            flex-direction: column; /* Stack vertically */
+            min-height: auto;
+        }
+
+        .form-section {
+            padding: 40px 20px;
+            order: 1; /* Form stays at the top */
+        }
+
+        .overlay-section {
+            padding: 30px 20px;
+            order: 2; /* Blue box goes to bottom */
+        }
+
+        .mobile-only-footer {
+            display: block;
+        }
+    }
+</style>
 {% endblock %}

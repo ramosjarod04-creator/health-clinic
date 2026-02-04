@@ -1,10 +1,9 @@
 {% extends 'appointments/base.html' %}
 
 {% block auth_content %}
-<div style="display: flex; min-height: 100vh; align-items: center; justify-content: center; background: #f6f5f7;">
-    <div style="background: white; border-radius: 10px; box-shadow: 0 14px 28px rgba(0,0,0,0.2); display: flex; width: 768px; max-width: 100%; min-height: 480px; overflow: hidden;">
-        
-        <div style="flex: 1; padding: 50px; text-align: center;">
+<div class="auth-wrapper">
+    <div class="auth-container">
+        <div class="form-section">
             <h1 style="color: #333; margin-bottom: 10px;">Sign in</h1>
             <p style="color: #666; font-size: 0.9rem; margin-bottom: 30px;">Access your clinic account</p>
             
@@ -19,13 +18,108 @@
                 
                 {% include 'appointments/components/atoms/button.html' with text="SIGN IN" type="submit" %}
             </form>
+            
+            <div class="mobile-only-footer">
+                <p style="margin-top: 20px; font-size: 0.9rem;">
+                    Don't have an account? <a href="{% url 'register' %}" style="color: #0052cc; font-weight: bold;">Sign Up</a>
+                </p>
+            </div>
         </div>
 
-        <div style="flex: 1; background: linear-gradient(to right, #0052cc, #2b82ff); color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; text-align: center;">
+        <div class="overlay-section">
             <h1>Hello, Friend!</h1>
             <p>Enter your details and start your journey with our health clinic.</p>
-            <a href="{% url 'register' %}" style="border: 1px solid white; color: white; border-radius: 20px; padding: 10px 30px; text-decoration: none; font-weight: bold; margin-top: 20px;">SIGN UP</a>
+            <a href="{% url 'register' %}" class="ghost-button">SIGN UP</a>
         </div>
     </div>
 </div>
+
+<style>
+    /* Desktop Base Styles */
+    .auth-wrapper {
+        display: flex; 
+        min-height: 100vh; 
+        align-items: center; 
+        justify-content: center; 
+        background: #f6f5f7;
+        padding: 20px;
+    }
+
+    .auth-container {
+        background: white; 
+        border-radius: 10px; 
+        box-shadow: 0 14px 28px rgba(0,0,0,0.2); 
+        display: flex; 
+        width: 768px; 
+        max-width: 100%; 
+        min-height: 480px; 
+        overflow: hidden;
+    }
+
+    .form-section {
+        flex: 1; 
+        padding: 50px; 
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .overlay-section {
+        flex: 1; 
+        background: linear-gradient(to right, #0052cc, #2b82ff); 
+        color: white; 
+        display: flex; 
+        flex-direction: column; 
+        align-items: center; 
+        justify-content: center; 
+        padding: 40px; 
+        text-align: center;
+    }
+
+    .ghost-button {
+        border: 1px solid white; 
+        color: white; 
+        border-radius: 20px; 
+        padding: 10px 30px; 
+        text-decoration: none; 
+        font-weight: bold; 
+        margin-top: 20px;
+        transition: transform 0.2s;
+    }
+
+    .ghost-button:active {
+        transform: scale(0.95);
+    }
+
+    .mobile-only-footer {
+        display: none;
+    }
+
+    /* --- MOBILE RESPONSIVE --- */
+    @media (max-width: 768px) {
+        .auth-container {
+            flex-direction: column; /* Stacks the form on top of the blue box */
+            width: 100%;
+            min-height: auto;
+        }
+
+        .form-section {
+            padding: 40px 20px;
+        }
+
+        .overlay-section {
+            padding: 30px 20px;
+            /* Hide the blue box on tiny screens if you want it extra minimal, 
+               or keep it as a footer section */
+        }
+
+        .mobile-only-footer {
+            display: block; /* Show a simple text link on mobile */
+        }
+
+        /* Optional: Hide the giant blue box on mobile to keep focus on login */
+        /* .overlay-section { display: none; } */
+    }
+</style>
 {% endblock %}
