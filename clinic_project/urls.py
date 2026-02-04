@@ -4,6 +4,7 @@ from django.contrib.auth import views as auth_views
 from django.conf import settings  # Required for static handling
 from django.conf.urls.static import static  # Required for static handling
 from appointments import views 
+from django.views.generic.base import RedirectView
 
 urlpatterns = [
     # Admin Interface
@@ -24,6 +25,8 @@ urlpatterns = [
     path('status/<int:pk>/<str:status>/', views.update_status, name='update_status'),
     path('delete/<int:pk>/', views.delete_appointment, name='delete_appointment'),
     path('cancel/<int:pk>/', views.cancel_appointment, name='cancel_appointment'),
+
+    path('favicon.ico', RedirectView.as_view(url='/static/favicon.ico')),
 ]
 
 # Serving static files in development (WhiteNoise handles production)
