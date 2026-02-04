@@ -1,92 +1,43 @@
 <header class="main-header">
-    <div class="header-spacer"></div>
-
-    <div class="user-info-container">
-        <span class="user-name-text">
-            Logged in as: <strong>{{ user.username }}</strong>
-        </span>
-        
+    <div class="mobile-spacer"></div> <div class="header-right">
+        <span class="user-label">Logged in as: <strong>{{ user.username }}</strong></span>
         <form action="{% url 'logout' %}" method="post" style="margin: 0;">
             {% csrf_token %}
-            <button type="submit" class="logout-btn">
-                Logout
-            </button>
+            <button type="submit" class="logout-link">Logout</button>
         </form>
     </div>
 </header>
 
 <style>
     .main-header {
-        background: white; 
-        padding: 15px 30px; 
-        border-bottom: 1px solid #eef2f6; 
-        display: flex; 
-        justify-content: space-between; /* Changed to space-between for mobile spacing */
-        align-items: center; 
-        position: sticky; 
-        top: 0; 
-        z-index: 1000;
-        transition: padding 0.3s;
+        background: white;
+        padding: 12px 30px;
+        border-bottom: 1px solid #eef2f6;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 1000; /* Stays below the sidebar drawer */
     }
 
-    .user-info-container {
-        display: flex; 
-        align-items: center; 
-        gap: 20px;
-        margin-left: auto; /* Keeps content on the right */
+    .header-right {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-left: auto;
     }
 
-    .user-name-text {
-        font-size: 0.9rem; 
-        color: #64748b;
+    .user-label { font-size: 0.85rem; color: #64748b; }
+    
+    .logout-link {
+        background: none; border: none; color: #e11d48; 
+        font-weight: 600; cursor: pointer; font-size: 0.85rem;
     }
 
-    .logout-btn {
-        background: #fff1f2; 
-        border: none; 
-        color: #e11d48; 
-        font-weight: 600; 
-        cursor: pointer; 
-        font-size: 0.9rem; 
-        padding: 8px 16px; 
-        border-radius: 8px;
-        transition: background 0.2s;
-    }
-
-    .logout-btn:hover {
-        background: #ffe4e6;
-    }
-
-    .header-spacer {
-        display: none;
-        width: 60px; /* Width enough to clear the Drawer Button */
-    }
-
-    /* --- MOBILE RESPONSIVE --- */
     @media (max-width: 768px) {
-        .main-header {
-            padding: 10px 15px;
-        }
-
-        .header-spacer {
-            display: block; /* Shows on mobile to push user info away from drawer icon */
-        }
-
-        .user-name-text {
-            /* Hide the "Logged in as" text on very small screens to save space */
-            font-size: 0.8rem;
-        }
-
-        /* If user name is too long, we can hide the prefix */
-        @media (max-width: 480px) {
-            .user-name-text {
-                display: none; /* Only shows Logout button on tiny screens */
-            }
-        }
-
-        .logout-btn {
-            padding: 6px 12px;
-            font-size: 0.8rem;
-        }
+        .main-header { padding: 10px 15px; height: 60px; }
+        .mobile-spacer { width: 50px; display: block; } /* Space for hamburger icon */
+        .user-label { display: none; } /* Hide "Logged in as" on mobile to save space */
     }
 </style>
