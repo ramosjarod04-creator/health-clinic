@@ -5,9 +5,79 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Health Clinic System</title>
     <style>
-        :root { --primary-blue: #0052cc; --bg-light: #f4f7fe; }
-        body { margin: 0; font-family: 'Inter', 'Segoe UI', sans-serif; background-color: var(--bg-light); color: #1e293b; }
+        :root { 
+            --primary-blue: #0052cc; 
+            --bg-light: #f4f7fe; 
+            --sidebar-width: 260px;
+        }
+        
+        body { 
+            margin: 0; 
+            font-family: 'Inter', 'Segoe UI', sans-serif; 
+            background-color: var(--bg-light); 
+            color: #1e293b; 
+            overflow-x: hidden; 
+        }
+
         * { box-sizing: border-box; }
+
+        /* Global Layout Wrapper */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+            flex-direction: row;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            display: flex;
+            flex-direction: column;
+            transition: margin-left 0.3s ease;
+            width: calc(100% - var(--sidebar-width));
+        }
+
+        main {
+            padding: 30px;
+            flex: 1;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 1024px) {
+            /* Adjust padding for tablets */
+            main { padding: 20px; }
+        }
+
+        @media (max-width: 768px) {
+            /* On Mobile: Sidebar disappears/moves and content takes full width */
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            /* Stack all internal grid layouts provided in other templates */
+            div[style*="display: grid"], 
+            div[style*="display:grid"] {
+                grid-template-columns: 1fr !important;
+                gap: 15px !important;
+            }
+
+            /* Fix flex containers that are side-by-side */
+            div[style*="display: flex"], 
+            div[style*="display:flex"] {
+                flex-direction: column !important;
+            }
+
+            /* Ensure header and main padding is tighter on mobile */
+            main { padding: 15px; }
+
+            /* Navigation component usually needs to be hidden or toggled on mobile */
+            aside, nav {
+                width: 100% !important;
+                position: relative !important;
+            }
+        }
+
         /* Scrollbar styling */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
@@ -18,14 +88,16 @@
 <body>
 
     {% if user.is_authenticated %}
-        {% include 'appointments/components/organisms/navigation.html' %}
-        
-        <div style="margin-left: 260px; min-height: 100vh; display: flex; flex-direction: column;">
-            {% include 'appointments/components/organisms/header.html' %}
+        <div class="app-container">
+            {% include 'appointments/components/organisms/navigation.html' %}
             
-            <main style="padding: 30px; flex: 1;">
-                {% block content %}{% endblock %}
-            </main>
+            <div class="main-content">
+                {% include 'appointments/components/organisms/header.html' %}
+                
+                <main>
+                    {% block content %}{% endblock %}
+                </main>
+            </div>
         </div>
     {% else %}
         <main>
