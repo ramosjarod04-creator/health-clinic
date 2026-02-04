@@ -5,9 +5,9 @@ class Appointment(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending'),
         ('accepted', 'Accepted'),
-        ('completed', 'Completed'),
         ('admitted', 'Admitted'),
         ('discharged', 'Discharged'),
+        ('completed', 'Completed'),
         ('denied', 'Denied'),
     ]
 

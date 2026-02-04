@@ -11,22 +11,32 @@
                 <span style="font-size: 0.7rem; font-weight: 800; color: #0052cc; text-transform: uppercase;">{{ appt.get_service_type_display }}</span>
                 <h4 style="margin: 5px 0;">Patient: {{ appt.patient_name }}</h4>
                 <p style="margin: 0; font-size: 0.85rem; color: #64748b;">Dr. {{ appt.doctor_name }} | Fee: ₱{{ appt.fee|floatformat:2 }}</p>
+                <p style="margin: 0; font-size: 0.75rem; color: #94a3b8;">Status: <strong>{{ appt.status|upper }}</strong></p>
             </div>
 
-            <div style="display: flex; gap: 10px;">
+            <div style="display: flex; gap: 10px; align-items: center;">
                 {% if appt.status == 'pending' %}
                     <a href="{% url 'update_status' appt.pk 'accepted' %}" style="background: #2ecc71; color: white; padding: 8px 15px; border-radius: 8px; text-decoration: none; font-size: 0.8rem; font-weight: 600;">ACCEPT</a>
                     <a href="{% url 'update_status' appt.pk 'denied' %}" style="background: #e11d48; color: white; padding: 8px 15px; border-radius: 8px; text-decoration: none; font-size: 0.8rem; font-weight: 600;">DENY</a>
+                
+                {% elif appt.status == 'accepted' %}
+                    <a href="{% url 'update_status' appt.pk 'admitted' %}" style="background: #f59e0b; color: white; padding: 8px 15px; border-radius: 8px; text-decoration: none; font-size: 0.8rem; font-weight: 600;">ADMIT</a>
+                
+                {% elif appt.status == 'admitted' %}
+                    <a href="{% url 'update_status' appt.pk 'discharged' %}" style="background: #0ea5e9; color: white; padding: 8px 15px; border-radius: 8px; text-decoration: none; font-size: 0.8rem; font-weight: 600;">DISCHARGE</a>
+                
                 {% else %}
                     <span style="color: #64748b; font-size: 0.8rem; font-weight: 700;">{{ appt.status|upper }}</span>
                 {% endif %}
                 
                 <form action="{% url 'delete_appointment' appt.pk %}" method="POST" style="margin:0;">
                     {% csrf_token %}
-                    <button type="submit" style="background: none; border: none; cursor: pointer;">🗑️</button>
+                    <button type="submit" style="background: none; border: none; cursor: pointer;" onclick="return confirm('Delete this record?')">🗑️</button>
                 </form>
             </div>
         </div>
+        {% empty %}
+        <p style="text-align: center; color: #64748b;">No appointments found.</p>
         {% endfor %}
     </div>
 </div>

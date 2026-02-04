@@ -59,9 +59,15 @@ def appointment_main(request):
         return redirect('appointment_main')
 
     all_appointments = Appointment.objects.all()
+    
+    # EARNINGS: Now includes 'discharged' or 'completed'
+    earnings_total = all_appointments.filter(
+        Q(status='discharged') | Q(status='completed')
+    ).aggregate(Sum('fee'))['fee__sum'] or 0
+
     stats = {
         'total_patients': User.objects.filter(is_staff=False).count(),
-        'earnings': all_appointments.filter(status='completed').aggregate(Sum('fee'))['fee__sum'] or 0,
+        'earnings': earnings_total,
         'admitted': all_appointments.filter(status='admitted').count(),
         'discharged': all_appointments.filter(status='discharged').count(),
         'pending': all_appointments.filter(status='pending').count(),
@@ -86,6 +92,7 @@ def update_status(request, pk, status):
         appointment = get_object_or_404(Appointment, pk=pk)
         appointment.status = status
         appointment.save()
+        # Redirect back to the all_appointments list
         return redirect('all_appointments')
     return redirect('appointment_main')
 
