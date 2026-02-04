@@ -1,46 +1,116 @@
 {% extends 'appointments/base.html' %}
 
 {% block content %}
-<div style="padding: 30px;">
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
-        <div style="background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 20px;">
-            <div style="background: #eef2ff; padding: 15px; border-radius: 50%;"></div>
+<div class="page-content-wrapper">
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon-blue"></div>
             <div>
-                <h2 style="margin: 0; font-size: 1.8rem;">{{ stats.total_patients }}</h2>
-                <p style="margin: 0; color: #64748b; font-size: 0.8rem;">Total Registered Patients</p>
+                <h2 class="stat-value">{{ stats.total_patients }}</h2>
+                <p class="stat-label">Total Registered Patients</p>
             </div>
         </div>
-        <div style="background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 20px;">
-    <div style="background: #fff7ed; padding: 15px; border-radius: 50%; font-size: 1.2rem;">₱</div>
-    <div>
-        <h2 style="margin: 0; font-size: 1.8rem;">₱{{ stats.earnings|floatformat:2 }}</h2>
-        <p style="margin: 0; color: #64748b; font-size: 0.8rem;">Total Clinic Earnings</p>
-    </div>
-</div>
+        
+        <div class="stat-card">
+            <div class="stat-icon-orange">₱</div>
+            <div>
+                <h2 class="stat-value">₱{{ stats.earnings|floatformat:2 }}</h2>
+                <p class="stat-label">Total Clinic Earnings</p>
+            </div>
+        </div>
     </div>
 
-    <div style="background: white; border-radius: 20px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);">
-        <h3 style="margin-top: 0; color: #1e293b; margin-bottom: 20px;">Registered Patient Directory</h3>
-        <table style="width: 100%; border-collapse: collapse;">
-            <thead>
-                <tr style="text-align: left; border-bottom: 2px solid #f1f5f9;">
-                    <th style="padding: 15px; color: #64748b; font-size: 0.85rem;">USERNAME</th>
-                    <th style="padding: 15px; color: #64748b; font-size: 0.85rem;">FULL NAME</th>
-                    <th style="padding: 15px; color: #64748b; font-size: 0.85rem;">EMAIL</th>
-                    <th style="padding: 15px; color: #64748b; font-size: 0.85rem;">JOINED DATE</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for patient in patients %}
-                <tr style="border-bottom: 1px solid #f1f5f9;">
-                    <td style="padding: 15px; font-weight: 600; color: #0052cc;">@{{ patient.username }}</td>
-                    <td style="padding: 15px;">{{ patient.get_full_name|default:"Not Provided" }}</td>
-                    <td style="padding: 15px; color: #64748b;">{{ patient.email }}</td>
-                    <td style="padding: 15px;">{{ patient.date_joined|date:"M d, Y" }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="directory-container">
+        <h3 class="directory-title">Registered Patient Directory</h3>
+        
+        <div class="table-scroll-wrapper">
+            <table class="patient-table">
+                <thead>
+                    <tr>
+                        <th>USERNAME</th>
+                        <th>FULL NAME</th>
+                        <th>EMAIL</th>
+                        <th>JOINED DATE</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for patient in patients %}
+                    <tr>
+                        <td class="username-cell">@{{ patient.username }}</td>
+                        <td>{{ patient.get_full_name|default:"Not Provided" }}</td>
+                        <td class="email-cell">{{ patient.email }}</td>
+                        <td>{{ patient.date_joined|date:"M d, Y" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" style="text-align: center; padding: 30px; color: #64748b;">No patients registered yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
+
+<style>
+    /* Desktop Layout */
+    .page-content-wrapper { padding: 30px; }
+    
+    .stats-grid {
+        display: grid; 
+        grid-template-columns: 1fr 1fr; 
+        gap: 20px; 
+        margin-bottom: 30px;
+    }
+
+    .stat-card {
+        background: white; padding: 25px; border-radius: 15px; 
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+        display: flex; align-items: center; gap: 20px;
+    }
+
+    .stat-icon-blue { background: #eef2ff; padding: 15px; border-radius: 50%; width: 45px; height: 45px; }
+    .stat-icon-orange { background: #fff7ed; padding: 15px; border-radius: 50%; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; width: 45px; height: 45px; }
+    
+    .stat-value { margin: 0; font-size: 1.8rem; }
+    .stat-label { margin: 0; color: #64748b; font-size: 0.8rem; }
+
+    .directory-container {
+        background: white; border-radius: 20px; padding: 30px; 
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    }
+
+    .directory-title { margin-top: 0; color: #1e293b; margin-bottom: 20px; }
+
+    /* TABLE STYLING */
+    .table-scroll-wrapper {
+        width: 100%;
+        overflow-x: auto; /* Enables horizontal scroll */
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling for iOS */
+        border-radius: 8px;
+    }
+
+    .patient-table { width: 100%; border-collapse: collapse; min-width: 600px; /* Forces scroll on small screens */ }
+    
+    .patient-table th { 
+        text-align: left; padding: 15px; color: #64748b; 
+        font-size: 0.85rem; border-bottom: 2px solid #f1f5f9; 
+    }
+
+    .patient-table td { padding: 15px; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
+    
+    .username-cell { font-weight: 600; color: #0052cc; }
+    .email-cell { color: #64748b; }
+
+    /* MOBILE ADJUSTMENTS */
+    @media (max-width: 768px) {
+        .page-content-wrapper { padding: 15px; }
+        
+        .stats-grid { grid-template-columns: 1fr; } /* Stack cards vertically */
+        
+        .directory-container { padding: 20px 15px; }
+
+        .stat-value { font-size: 1.5rem; }
+    }
+</style>
 {% endblock %}
