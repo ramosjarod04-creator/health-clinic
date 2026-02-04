@@ -11,12 +11,15 @@
             --sidebar-width: 260px;
         }
         
-        body { 
+        /* Core Reset */
+        body, html { 
             margin: 0; 
             font-family: 'Inter', 'Segoe UI', sans-serif; 
             background-color: var(--bg-light); 
             color: #1e293b; 
+            /* Prevents horizontal scrolling on the entire app */
             overflow-x: hidden; 
+            width: 100%;
         }
 
         * { box-sizing: border-box; }
@@ -25,57 +28,58 @@
         .app-container {
             display: flex;
             min-height: 100vh;
-            flex-direction: row;
+            width: 100%;
         }
 
+        /* Sidebar content - handled by navigation.html */
+        
         .main-content {
             flex: 1;
+            /* In desktop, push content to the right of the fixed sidebar */
             margin-left: var(--sidebar-width);
             display: flex;
             flex-direction: column;
-            transition: margin-left 0.3s ease;
+            transition: all 0.3s ease;
             width: calc(100% - var(--sidebar-width));
+            min-height: 100vh;
         }
 
         main {
             padding: 30px;
             flex: 1;
+            width: 100%;
         }
 
         /* Responsive Breakpoints */
         @media (max-width: 1024px) {
-            /* Adjust padding for tablets */
             main { padding: 20px; }
         }
 
         @media (max-width: 768px) {
-            /* On Mobile: Sidebar disappears/moves and content takes full width */
+            /* Full width on mobile because sidebar is now a popup drawer */
             .main-content {
                 margin-left: 0;
                 width: 100%;
             }
 
-            /* Stack all internal grid layouts provided in other templates */
-            div[style*="display: grid"], 
-            div[style*="display:grid"] {
+            /* FORCE STACKING: This ensures any grid or flex layouts 
+               inside your dashboard cards stack vertically on phones.
+            */
+            .main-content div[style*="display: grid"], 
+            .main-content div[style*="display:flex"],
+            .main-content .grid-container {
                 grid-template-columns: 1fr !important;
+                flex-direction: column !important;
                 gap: 15px !important;
             }
 
-            /* Fix flex containers that are side-by-side */
-            div[style*="display: flex"], 
-            div[style*="display:flex"] {
-                flex-direction: column !important;
+            /* Make sure images or large cards don't break the screen width */
+            img, .card, .stat-box {
+                max-width: 100% !important;
+                height: auto !important;
             }
 
-            /* Ensure header and main padding is tighter on mobile */
-            main { padding: 15px; }
-
-            /* Navigation component usually needs to be hidden or toggled on mobile */
-            aside, nav {
-                width: 100% !important;
-                position: relative !important;
-            }
+            main { padding: 15px; padding-top: 70px; } /* padding-top makes room for the drawer button */
         }
 
         /* Scrollbar styling */
@@ -100,9 +104,9 @@
             </div>
         </div>
     {% else %}
-        <main>
+        <div class="auth-page-wrapper">
             {% block auth_content %}{% endblock %}
-        </main>
+        </div>
     {% endif %}
 
 </body>

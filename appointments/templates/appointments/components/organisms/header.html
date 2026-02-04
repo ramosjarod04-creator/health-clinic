@@ -18,7 +18,9 @@
         align-items: center;
         position: sticky;
         top: 0;
-        z-index: 1000; /* Stays below the sidebar drawer */
+        /* Lower than drawer button (9990) and sidebar (9999) */
+        z-index: 1000; 
+        width: 100%;
     }
 
     .header-right {
@@ -28,16 +30,44 @@
         margin-left: auto;
     }
 
-    .user-label { font-size: 0.85rem; color: #64748b; }
+    .user-label { 
+        font-size: 0.85rem; 
+        color: #64748b; 
+    }
     
     .logout-link {
-        background: none; border: none; color: #e11d48; 
-        font-weight: 600; cursor: pointer; font-size: 0.85rem;
+        background: none; 
+        border: none; 
+        color: #e11d48; 
+        font-weight: 600; 
+        cursor: pointer; 
+        font-size: 0.85rem;
+        padding: 5px 10px;
+        border-radius: 6px;
+        transition: background 0.2s;
+    }
+
+    .logout-link:hover {
+        background: #fff1f2;
     }
 
     @media (max-width: 768px) {
-        .main-header { padding: 10px 15px; height: 60px; }
-        .mobile-spacer { width: 50px; display: block; } /* Space for hamburger icon */
-        .user-label { display: none; } /* Hide "Logged in as" on mobile to save space */
+        .main-header { 
+            padding: 10px 15px; 
+            height: 60px; 
+            /* Ensures it stays above dashboard content but under sidebar */
+            position: fixed; 
+        }
+
+        /* Creates room for the fixed blue hamburger button */
+        .mobile-spacer { 
+            width: 55px; 
+            display: block; 
+            flex-shrink: 0;
+        } 
+
+        .user-label { 
+            display: none; 
+        }
     }
 </style>

@@ -1,4 +1,4 @@
-<button id="drawer-toggle" class="drawer-button">
+<button id="drawer-toggle" class="drawer-button" aria-label="Toggle Navigation">
     <span class="hamburger"></span>
 </button>
 
@@ -46,10 +46,26 @@
 <div id="nav-overlay" class="overlay"></div>
 
 <style>
+    /* GLOBAL MOBILE FIX: Prevents horizontal scroll caused by wide dashboard cards */
+    @media (max-width: 768px) {
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+            position: relative;
+        }
+    }
+
     /* DESKTOP BASE */
     .nav-container {
-        width: 260px; background: white; height: 100vh; border-right: 1px solid #eef2f6; 
-        padding: 30px 20px; position: fixed; left: 0; top: 0; z-index: 1050;
+        width: 260px; 
+        background: white; 
+        height: 100vh; 
+        border-right: 1px solid #eef2f6; 
+        padding: 30px 20px; 
+        position: fixed; 
+        left: 0; 
+        top: 0; 
+        z-index: 1050;
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
@@ -65,12 +81,12 @@
     .link-inactive:hover { background-color: #f8fafc; }
     .nav-divider { margin-top: 20px; border-top: 1px solid #f1f5f9; padding-top: 20px; }
 
-    /* MOBILE REPAIRS */
+    /* MOBILE DRAWER LOGIC */
     @media (max-width: 768px) {
         .nav-container {
             transform: translateX(-100%);
             box-shadow: 15px 0 30px rgba(0,0,0,0.1);
-            z-index: 2000; /* Higher than the toggle button */
+            z-index: 9999; /* Highest z-index to overlay everything */
         }
 
         .nav-container.active {
@@ -79,15 +95,15 @@
 
         .drawer-button {
             display: flex;
-            position: fixed;
-            top: 12px;
-            left: 12px;
-            z-index: 1900; /* Sits below the sidebar when open */
+            position: fixed; /* STICKY TO VIEWPORT */
+            top: 15px;
+            left: 15px;
+            z-index: 9990; /* Just below the sidebar */
             background: #0052cc;
             border: none;
-            width: 42px;
-            height: 42px;
-            border-radius: 8px;
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
             align-items: center;
             justify-content: center;
             cursor: pointer;
@@ -111,11 +127,11 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             background: rgba(0,0,0,0.5);
             backdrop-filter: blur(3px);
-            z-index: 1950; /* Sits between the button and the sidebar */
+            z-index: 9995; /* Between button and sidebar */
         }
         .overlay.active { display: block; }
     }
@@ -127,8 +143,11 @@
     const navOverlay = document.getElementById('nav-overlay');
 
     function toggleMenu() {
-        sideNav.classList.toggle('active');
+        const isActive = sideNav.classList.toggle('active');
         navOverlay.classList.toggle('active');
+        
+        // Prevent background scrolling when menu is open
+        document.body.style.overflow = isActive ? 'hidden' : '';
     }
 
     drawerToggle.addEventListener('click', toggleMenu);
